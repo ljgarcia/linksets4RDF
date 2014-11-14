@@ -24,8 +24,9 @@ public class LinksetsGeneration {
 	/**
 	 * Main class.
 	 * @param args [mode, working directory, endpoint URI, dataset URI, offset], for more information see usage.
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		long intialTime = new Date().getTime();
 		String usage = "Usage: java -jar linksetsGeneration.jar\n"
 				+ "-m extract (only extract is currently supported)\n"

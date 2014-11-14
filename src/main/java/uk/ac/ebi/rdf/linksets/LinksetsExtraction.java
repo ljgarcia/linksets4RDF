@@ -11,9 +11,7 @@
  */
 package uk.ac.ebi.rdf.linksets;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
@@ -176,9 +174,9 @@ public class LinksetsExtraction {
 	/**
 	 * Retrieves (s, p, o) triples for all types in the dataset.
 	 * @return Number of types effectively processed.
-	 * @throws FileNotFoundException 
+	 * @throws Exception 
 	 */
-	private int retrieveOneByOne() throws FileNotFoundException {
+	private int retrieveOneByOne() throws Exception {
 		int processed = 0;
 		int toLinkset = 0;
 		String type = null;
@@ -257,9 +255,9 @@ public class LinksetsExtraction {
 	
 	/**
 	 * Extracts the types and creates the linksets for a dataset.
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public void extract() throws IOException {
+	public void extract() throws Exception {
 		logger.info("Total number of types in the dataset: " + this.getTypesNumber() + ". Process starting at " + this.offset);
 		logger.info("A temp file will be written every " + LinksetsExtraction.LIMIT + " types");
 		QueryEngineHTTP httpQuery = this.retrieveAllTypes();
