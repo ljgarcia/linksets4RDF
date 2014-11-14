@@ -1,0 +1,6 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:void="http://rdfs.org/ns/void#">
+  <void:Dataset rdf:about="http://rdf.ebi.ac.uk/dataset/atlas/13.07"/>
+</rdf:RDF>
