@@ -1,6 +1,8 @@
 .settings/
 deploy/
 logs/
+output/
 target/
 .project
 .classpath
+build.xml

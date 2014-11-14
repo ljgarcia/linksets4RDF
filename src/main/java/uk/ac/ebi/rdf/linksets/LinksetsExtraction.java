@@ -11,6 +11,7 @@
  */
 package uk.ac.ebi.rdf.linksets;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
@@ -26,6 +27,7 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -56,6 +58,7 @@ public class LinksetsExtraction {
 	private String endpoint;
 	private String output;
 	private int offset;
+	private int limit;
 	private ResultSet allTypesResultset;
 	private Model model;
 	private Resource dataset;
@@ -67,10 +70,11 @@ public class LinksetsExtraction {
 	private Property objectsTargetProp;
 	private Property subsetProp;
 	
-	public LinksetsExtraction(String datasetURI, String endpoint, String output, int offset) {
+	public LinksetsExtraction(String datasetURI, String endpoint, String output, int offset, int limit) {
 		this.endpoint = endpoint;
 		this.output = output;
 		this.offset = offset;
+		this.limit = limit;
 		this.model = ModelFactory.createDefaultModel();
 		this.model.setNsPrefixes(Prefix.getPrefixes());
 		this.type = model.getProperty(Configuration.RDF_TYPE_PROP);
@@ -107,7 +111,11 @@ public class LinksetsExtraction {
 			"  ?entity rdf:type ?" + LinksetsExtraction.ENTITY_TYPE + " . " + 
 			"  ?" + LinksetsExtraction.ENTITY_TYPE + " rdf:type owl:Class . " +
 			"} ORDER BY ?" + LinksetsExtraction.ENTITY_TYPE + " OFFSET " + this.offset;
-		return query;
+		if (this.offset != 0) {
+			return query + " LIMIT " + this.limit;
+		} else {
+			return query;
+		}
 	}		
 		
 	/**
@@ -147,10 +155,10 @@ public class LinksetsExtraction {
 				httpQuery.close();
 				return count;
 			} catch (Exception nfe) {
-				logger.warn("It was not possible to parse the total number of types in the dataset");
+				logger.warn("It was not possible to parse the total number of types in the dataset from OFFSET " + this.offset + " to LIMIT " + this.limit);
 			}
 		} else {
-			logger.warn("It was not possible to retrieve the total number of types in the dataset");
+			logger.warn("It was not possible to retrieve the total number of types in the  from OFFSET " + this.offset + " to LIMIT " + this.limit);
 		}
 		httpQuery.close();
 		return 0;
@@ -174,20 +182,20 @@ public class LinksetsExtraction {
 	/**
 	 * Retrieves (s, p, o) triples for all types in the dataset.
 	 * @return Number of types effectively processed.
+	 * @throws FileNotFoundException 
 	 * @throws Exception 
 	 */
-	private int retrieveOneByOne() throws Exception {
-		int processed = 0;
-		int toLinkset = 0;
+	private int retrieveOneByOne() throws FileNotFoundException {
+		int processed = 0, processedSubjects = 0, processedTriples = 0;
 		String type = null;
-		try {
-			//Query one by one except those to be filtered out. If the one to be filtered out is an object, filter out that triple from results.
-			while (this.allTypesResultset.hasNext()) {
-				type = this.allTypesResultset.next().get(LinksetsExtraction.ENTITY_TYPE).toString();
-				if (!Configuration.shouldBeExcluded(type)) {
+		//Query one by one except those to be filtered out. If the one to be filtered out is an object, filter out that triple from results.
+		while (this.allTypesResultset.hasNext()) {
+			type = this.allTypesResultset.next().get(LinksetsExtraction.ENTITY_TYPE).toString();
+			if (!Configuration.shouldBeExcluded(type)) {				
+				try {
 					Query query = QueryFactory.create(this.getQueryAType(type), Syntax.syntaxARQ);
 					QueryEngineHTTP httpQuery = new QueryEngineHTTP(this.endpoint, query);
-					ResultSet results = httpQuery.execSelect();				
+					ResultSet results = httpQuery.execSelect();			
 					while (results.hasNext()) {
 						//System.out.println("has results");
 						QuerySolution solution = results.next();
@@ -204,29 +212,33 @@ public class LinksetsExtraction {
 							String mergedObj = Configuration.merge(objectNode);
 							mergedObj = mergedObj == null ? objectNode : mergedObj;
 							this.addLinksetToModel(mergedSub, predicateNode, mergedObj);
-							toLinkset++;
+							processedTriples++;
 						} catch (MatcherExcepction e) {
 							logger.warn("WARN - Ommitted triple (" + subjectNode + ", " + predicateNode + ", " + objectNode + "): " + e.getMessage());
 						}					
 					}
-					httpQuery.close();				
-				}
-				processed++;
-				if (processed % LinksetsExtraction.LIMIT == 0) {
-					OutputStream output = new FileOutputStream(this.output + ".temp");
-					this.model.write(output, "RDF/XML-ABBREV");
-					logger.info("Processed so far " + processed + " types, from which only " + toLinkset + " are suitable for linksets.");
-				}
+					processedSubjects++;
+					httpQuery.close();	
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.error("FATAL unexpected error, absolute OFFSET " + (processed + this.offset) + ", relative OFFSET " + processed + ".\n"
+						+ "Type being processed was " + type + ", will not be included in the results: " + e.getMessage() + ".\n"
+						+ "Last tried query was \n" + this.getQueryAType(type));
+				}							
 			}
-		} catch(Exception e) {
-			logger.error("FATAL unexpected error, only " + processed + " types where actually processed. Type being processed was " + type + ".\n"
-				+ "Last tried query was " + this.getQueryAType(type));
-			OutputStream output = new FileOutputStream(this.output + ".temp");
-			this.model.write(output, "RDF/XML-ABBREV");
-			logger.info("Processed so far " + processed + " types, from which only " + toLinkset + " are suitable for linksets.");
-			throw e;
-		} 
-		logger.info("All types processed, a total of " + processed + ", from which only " + toLinkset + " are suitable for linksets.");
+			processed++;
+			System.out.println("Processed: " + processed);
+			if (processed % LinksetsExtraction.LIMIT == 0) {
+				OutputStream output = new FileOutputStream(this.output + ".temp");
+				this.model.write(output, "RDF/XML-ABBREV");
+				logger.info("Processed so far " + processed + " types, "
+					+ "from which only " + processedSubjects + " are suitable for linksets. "
+					+ "Triples to be converted in linksets so far " + processedTriples);
+			}
+		}
+		logger.info("All types processed, a total of " + processed + ", "
+			+ "from which only " + processedSubjects + " are suitable for linksets. "
+				+ "Triples converted in linksets " + processedTriples);
 		return processed;
 	}
 	
@@ -238,15 +250,18 @@ public class LinksetsExtraction {
 	 */
 	private void addLinksetToModel(String sub, String pred, String obj) {
 		//subject class partition
+		String subId = sub.replaceAll("[^a-zA-Z0-9]", "_");
 		Resource subRes = model.createResource(sub);
-		Resource subResNode = model.createResource().addProperty(this.classProp, subRes);
+		Resource subResNode = model.createResource(new AnonId(subId)).addProperty(this.classProp, subRes);
 		dataset.addProperty(this.classPartitionProp, subResNode);
 		//object class partition
+		String objId = obj.replaceAll("[^a-zA-Z0-9]", "_");
 		Resource objRes = model.createResource(obj);
-		Resource objResNode = model.createResource().addProperty(this.classProp, objRes);
+		Resource objResNode = model.createResource(new AnonId(objId)).addProperty(this.classProp, objRes);
 		dataset.addProperty(this.classPartitionProp, objResNode);
 		//link predicate
-		Resource linkset = model.createResource().addProperty(this.type, model.createResource(VoidVocabulary.CLASS_LINKSET.getEntityURI()));
+		String linksetId = subId + "_" + pred.replaceAll("[^a-zA-Z0-9]", "_") + "_" + objId; 
+		Resource linkset = model.createResource(new AnonId(linksetId)).addProperty(this.type, model.createResource(VoidVocabulary.CLASS_LINKSET.getEntityURI()));
 		linkset.addProperty(this.linkPredicateProp, model.createResource(pred));
 		linkset.addProperty(this.subjectsTargetProp, subResNode);
 		linkset.addProperty(this.objectsTargetProp, objResNode);
@@ -255,9 +270,10 @@ public class LinksetsExtraction {
 	
 	/**
 	 * Extracts the types and creates the linksets for a dataset.
+	 * @throws FileNotFoundException 
 	 * @throws Exception 
 	 */
-	public void extract() throws Exception {
+	public void extract() throws FileNotFoundException {
 		logger.info("Total number of types in the dataset: " + this.getTypesNumber() + ". Process starting at " + this.offset);
 		logger.info("A temp file will be written every " + LinksetsExtraction.LIMIT + " types");
 		QueryEngineHTTP httpQuery = this.retrieveAllTypes();

@@ -33,7 +33,8 @@ public class LinksetsGeneration {
 				+ "-w <working directory> directory where RDF output will be saved\n"
 				+ "-ep <endpoint URI> endpoint for which you are generating linksets\n"
 				+ "-ds <dataset URI> dataset URI\n"
-				+ "-o <number> offset to process types (in case process drops in the middle)";
+				+ "-o <number> offset to process types (in case process drops in the middle)\n"
+				+ "-l <number> limit to process types from offset, if offset is 0 limit will be discarded.";
 		if (args == null) {
 			System.out.println(usage);
 			System.exit(0);
@@ -41,7 +42,7 @@ public class LinksetsGeneration {
 		PropertyConfigurator.configure("log4j.properties");	
 
 		String runningMode = null, workingDir = null, endpoint = null, dataset = null;
-		int offset = 0;
+		int offset = 0, limit = 0;
 		//boolean addIssuedDate = false;
 		for (int i = 0; i < args.length; i++) {
 			String str = args[i];
@@ -56,6 +57,10 @@ public class LinksetsGeneration {
 			} else if (str.equalsIgnoreCase("-o")) {
 				try {
 					offset = Integer.parseInt(args[++i]);
+				} catch (NumberFormatException nfe) {}				
+			} else if (str.equalsIgnoreCase("-l")) {
+				try {
+					limit = Integer.parseInt(args[++i]);
 				} catch (NumberFormatException nfe) {}				
 			} 
 		}
@@ -82,7 +87,7 @@ public class LinksetsGeneration {
 			if ((endpoint != null) && (dataset != null)) {
 				outputFileName = workingDir + "/" + ModeAndFile.EXTRACT.getFileName();
 				try {
-					LinksetsExtraction linksets = new LinksetsExtraction(dataset, endpoint, outputFileName, offset);
+					LinksetsExtraction linksets = new LinksetsExtraction(dataset, endpoint, outputFileName, offset, limit);
 					linksets.extract();
 				} catch (IOException e) {
 					logger.error("Unxpected error while extracting classes and properties from " + endpoint + "\nCheck the output file at " + outputFileName);
