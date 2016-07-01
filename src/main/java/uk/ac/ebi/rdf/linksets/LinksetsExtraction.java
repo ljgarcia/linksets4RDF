@@ -33,6 +33,8 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
+import java.io.PrintWriter;
+
 
 /**
  * @author LeylaJael
@@ -69,8 +71,9 @@ public class LinksetsExtraction {
 	private Property subjectsTargetProp;
 	private Property objectsTargetProp;
 	private Property subsetProp;
+    private PrintWriter out;
 	
-	public LinksetsExtraction(String datasetURI, String endpoint, String output, int offset, int limit) {
+	public LinksetsExtraction(String datasetURI, String endpoint, String output, int offset, int limit, PrintWriter out) {
 		this.endpoint = endpoint;
 		this.output = output;
 		this.offset = offset;
@@ -85,6 +88,7 @@ public class LinksetsExtraction {
 		this.subjectsTargetProp = model.getProperty(VoidVocabulary.PROP_SUBJECTS_TARGET.getEntityURI());
 		this.objectsTargetProp = model.getProperty(VoidVocabulary.PROP_OBJECTS_TARGET.getEntityURI());
 		this.subsetProp = model.getProperty(VoidVocabulary.PROP_SUBSET.getEntityURI());
+        this.out = out;
 	}
 	/**
 	 * Query to retrieve how many distinct types (owL:Class) exist in the dataset.
@@ -195,7 +199,8 @@ public class LinksetsExtraction {
 				try {
 					Query query = QueryFactory.create(this.getQueryAType(type), Syntax.syntaxARQ);
 					QueryEngineHTTP httpQuery = new QueryEngineHTTP(this.endpoint, query);
-					ResultSet results = httpQuery.execSelect();			
+                    httpQuery.setTimeout(10000);
+					ResultSet results = httpQuery.execSelect();
 					while (results.hasNext()) {
 						//System.out.println("has results");
 						QuerySolution solution = results.next();
@@ -230,7 +235,7 @@ public class LinksetsExtraction {
 			System.out.println("Processed: " + processed);
 			if (processed % LinksetsExtraction.LIMIT == 0) {
 				OutputStream output = new FileOutputStream(this.output + ".temp");
-				this.model.write(output, "RDF/XML-ABBREV");
+				this.model.write(output, "Turtle");
 				logger.info("Processed so far " + processed + " types, "
 					+ "from which only " + processedSubjects + " are suitable for linksets. "
 					+ "Triples to be converted in linksets so far " + processedTriples);
@@ -249,23 +254,37 @@ public class LinksetsExtraction {
 	 * @param obj
 	 */
 	private void addLinksetToModel(String sub, String pred, String obj) {
-		//subject class partition
+		//log output
+        try {
+            out.print(sub);
+            out.print(", ");
+            out.print(pred);
+            out.print(", ");
+            out.println(obj);
+            out.println('\n');
+        }catch(Exception e){
+            System.err.println("output file write err");
+            System.err.println(e);
+        }
+
+
+		/*//subject class partition
 		String subId = sub.replaceAll("[^a-zA-Z0-9]", "_");
 		Resource subRes = model.createResource(sub);
 		Resource subResNode = model.createResource(new AnonId(subId)).addProperty(this.classProp, subRes);
-		dataset.addProperty(this.classPartitionProp, subResNode);
+		//dataset.addProperty(this.classPartitionProp, subResNode);
 		//object class partition
 		String objId = obj.replaceAll("[^a-zA-Z0-9]", "_");
 		Resource objRes = model.createResource(obj);
 		Resource objResNode = model.createResource(new AnonId(objId)).addProperty(this.classProp, objRes);
-		dataset.addProperty(this.classPartitionProp, objResNode);
+		//dataset.addProperty(this.classPartitionProp, objResNode);
 		//link predicate
 		String linksetId = subId + "_" + pred.replaceAll("[^a-zA-Z0-9]", "_") + "_" + objId; 
 		Resource linkset = model.createResource(new AnonId(linksetId)).addProperty(this.type, model.createResource(VoidVocabulary.CLASS_LINKSET.getEntityURI()));
-		linkset.addProperty(this.linkPredicateProp, model.createResource(pred));
 		linkset.addProperty(this.subjectsTargetProp, subResNode);
+        linkset.addProperty(this.linkPredicateProp, model.createResource(pred));
 		linkset.addProperty(this.objectsTargetProp, objResNode);
-		linkset.addProperty(this.subsetProp, this.dataset);
+		//linkset.addProperty(this.subsetProp, this.dataset);*/
 	}
 	
 	/**
@@ -279,7 +298,8 @@ public class LinksetsExtraction {
 		QueryEngineHTTP httpQuery = this.retrieveAllTypes();
 		this.retrieveOneByOne();
 		httpQuery.close();
-		OutputStream output = new FileOutputStream(this.output);
-		this.model.write(output, "RDF/XML-ABBREV");
+        out.close();
+		//OutputStream output = new FileOutputStream(this.output);
+		//this.model.write(output, "TURTLE");
 	}
 }

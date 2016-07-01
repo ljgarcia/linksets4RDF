@@ -14,6 +14,8 @@ import org.apache.log4j.PropertyConfigurator;
 
 import uk.ac.ebi.rdf.linksets.config.ModeAndFile;
 
+import java.io.PrintWriter;
+
 /**
  * @version 0.1.0
  * @author ljgarcia@ebi.ac.uk
@@ -27,6 +29,7 @@ public class LinksetsGeneration {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
+		PrintWriter out = new PrintWriter("out.csv");
 		long intialTime = new Date().getTime();
 		String usage = "Usage: java -jar linksetsGeneration.jar\n"
 				+ "-m extract (only extract is currently supported)\n"
@@ -87,7 +90,7 @@ public class LinksetsGeneration {
 			if ((endpoint != null) && (dataset != null)) {
 				outputFileName = workingDir + "/" + ModeAndFile.EXTRACT.getFileName();
 				try {
-					LinksetsExtraction linksets = new LinksetsExtraction(dataset, endpoint, outputFileName, offset, limit);
+					LinksetsExtraction linksets = new LinksetsExtraction(dataset, endpoint, outputFileName, offset, limit, out);
 					linksets.extract();
 				} catch (IOException e) {
 					logger.error("Unxpected error while extracting classes and properties from " + endpoint + "\nCheck the output file at " + outputFileName);

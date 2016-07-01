@@ -1,0 +1,340 @@
+@prefix void:  <http://rdfs.org/ns/void#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+
+<http://rdf.ebi.ac.uk/resource/atlas/>
+        a       void:Dataset .
+
+_:b0    void:class  <http://rdf.ebi.ac.uk/terms/atlas/EnsemblDatabaseReference> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/dbXref> ;
+  void:objectsTarget   [ void:class  <http://rdf.ebi.ac.uk/terms/atlas/EntrezGeneDatabaseReference> ] ;
+  void:subjectsTarget  _:b1
+] .
+
+_:b1    void:class  <http://rdf.ebi.ac.uk/terms/atlas/ProbeDesignElement> .
+
+_:b2    void:class  <http://www.orphanet.org/rdfns/orphanet> .
+
+_:b3    void:class  <http://rdf.ebi.ac.uk/terms/atlas/in_situ_oligo_features> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000216> ;
+  void:objectsTarget   _:b4 ;
+  void:subjectsTarget  _:b5
+] .
+
+_:b6    void:class  <http://purl.obolibrary.org/obo/CHEBI> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSample> ;
+  void:objectsTarget   _:b5 ;
+  void:subjectsTarget  _:b7
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/taxon> ;
+  void:objectsTarget   _:b8 ;
+  void:subjectsTarget  _:b9
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b4 ;
+  void:subjectsTarget  _:b5
+] .
+
+_:b10   void:class  <http://purl.obolibrary.org/obo/PO> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   [ void:class  <http://purl.obolibrary.org/obo/PATO> ] ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/taxon> ;
+  void:objectsTarget   _:b8 ;
+  void:subjectsTarget  _:b0
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/partOfPlatform> ;
+  void:objectsTarget   _:b11 ;
+  void:subjectsTarget  _:b1
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000244> ;
+  void:objectsTarget   _:b10 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasAnalysis> ;
+  void:objectsTarget   [ void:class  <http://rdf.ebi.ac.uk/terms/atlas/DifferentialExpressionAnalysis> ] ;
+  void:subjectsTarget  _:b12
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/partOfPlatform> ;
+  void:objectsTarget   _:b9 ;
+  void:subjectsTarget  _:b1
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/dbXref> ;
+  void:objectsTarget   _:b0 ;
+  void:subjectsTarget  _:b1
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000244> ;
+  void:objectsTarget   _:b13 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasAssay> ;
+  void:objectsTarget   _:b7 ;
+  void:subjectsTarget  _:b12
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/isAbout> ;
+  void:objectsTarget   _:b8 ;
+  void:subjectsTarget  _:b12
+] .
+
+_:b9    void:class  <http://rdf.ebi.ac.uk/terms/atlas/synthesized> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/partOfPlatform> ;
+  void:objectsTarget   _:b14 ;
+  void:subjectsTarget  _:b1
+] .
+
+_:b11   void:class  <http://rdf.ebi.ac.uk/terms/atlas/DesignPlatform> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b2 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000217> ;
+  void:objectsTarget   _:b15 ;
+  void:subjectsTarget  _:b5
+] .
+
+_:b16   void:class  <http://purl.obolibrary.org/obo/NCBITaxon> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000244> ;
+  void:objectsTarget   _:b15 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b6 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b10 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000216> ;
+  void:objectsTarget   _:b13 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000235> ;
+  void:objectsTarget   _:b17 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/dbXref> ;
+  void:objectsTarget   [ void:class  <http://rdf.ebi.ac.uk/terms/atlas/UniprotDatabaseReference> ] ;
+  void:subjectsTarget  _:b1
+] .
+
+_:b13   void:class  <http://rdf.ebi.ac.uk/terms/atlas/ExperimentalFactor> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b18 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b15 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   [ void:class  <http://purl.obolibrary.org/obo/GO> ] ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/taxon> ;
+  void:objectsTarget   _:b8 ;
+  void:subjectsTarget  _:b14
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/partOfPlatform> ;
+  void:objectsTarget   _:b3 ;
+  void:subjectsTarget  _:b1
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000235> ;
+  void:objectsTarget   _:b2 ;
+  void:subjectsTarget  _:b5
+] .
+
+_:b8    void:class  <http://purl.obolibrary.org/obo/OBI> .
+
+_:b17   void:class  <http://purl.obolibrary.org/obo/CL> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000228> ;
+  void:objectsTarget   _:b6 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/partOfPlatform> ;
+  void:objectsTarget   _:b19 ;
+  void:subjectsTarget  _:b1
+] .
+
+_:b7    void:class  <http://rdf.ebi.ac.uk/terms/atlas/Assay> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000244> ;
+  void:objectsTarget   _:b17 ;
+  void:subjectsTarget  _:b5
+] .
+
+_:b12   void:class  <http://rdf.ebi.ac.uk/terms/atlas/Experiment> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000217> ;
+  void:objectsTarget   _:b13 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000235> ;
+  void:objectsTarget   _:b13 ;
+  void:subjectsTarget  _:b5
+] .
+
+_:b14   void:class  <http://rdf.ebi.ac.uk/terms/atlas/unknown_surface_type> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000244> ;
+  void:objectsTarget   _:b18 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b13 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/dbXref> ;
+  void:objectsTarget   [ void:class  <http://rdf.ebi.ac.uk/terms/atlas/MgiGeneDatabaseReference> ] ;
+  void:subjectsTarget  _:b1
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/dbXref> ;
+  void:objectsTarget   [ void:class  <http://rdf.ebi.ac.uk/terms/atlas/FlybaseDatabaseReference> ] ;
+  void:subjectsTarget  _:b1
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000228> ;
+  void:objectsTarget   _:b15 ;
+  void:subjectsTarget  _:b5
+] .
+
+_:b5    void:class  <http://rdf.ebi.ac.uk/terms/atlas/Sample> .
+
+_:b18   void:class  <http://purl.obolibrary.org/obo/BTO> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b16 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/hasSampleCharacteristic> ;
+  void:objectsTarget   _:b17 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/taxon> ;
+  void:objectsTarget   _:b8 ;
+  void:subjectsTarget  _:b11
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/taxon> ;
+  void:objectsTarget   _:b8 ;
+  void:subjectsTarget  _:b19
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000228> ;
+  void:objectsTarget   _:b13 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000228> ;
+  void:objectsTarget   _:b18 ;
+  void:subjectsTarget  _:b5
+] .
+
+_:b4    void:class  <http://purl.obolibrary.org/obo/UO> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://rdf.ebi.ac.uk/terms/atlas/taxon> ;
+  void:objectsTarget   _:b8 ;
+  void:subjectsTarget  _:b3
+] .
+
+_:b19   void:class  <http://rdf.ebi.ac.uk/terms/atlas/glass> .
+
+_:b15   void:class  <http://www.ebi.ac.uk/efo/> .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000244> ;
+  void:objectsTarget   _:b16 ;
+  void:subjectsTarget  _:b5
+] .
+
+[ a                    void:Linkset ;
+  void:linkPredicate   <http://semanticscience.org/resource/SIO_000235> ;
+  void:objectsTarget   _:b15 ;
+  void:subjectsTarget  _:b5
+] .
