@@ -1,0 +1,6 @@
+@prefix void:  <http://rdfs.org/ns/void#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+
+<http://rdf.ebi.ac.uk/resource/atlas/>
+        a       void:Dataset .
